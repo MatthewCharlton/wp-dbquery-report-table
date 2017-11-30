@@ -1,0 +1,35 @@
+#WPDBQRT-admin div {
+    padding: 5px;
+}
+#WPDBQRT-admin .wpmrt-controls {
+    font-weight: normal;
+    text-transform: capitalize;
+    border-radius: 3px;
+}
+div#delete-table {
+    display: inline-block;
+}
+.evens {
+    background: #f7f7f7;
+}
+#delete-table input[type=submit] {
+    margin-left: 15px;
+    cursor: pointer;
+    background: #dc372e;
+    color: #fff;
+    border: 2px solid #dc372e;
+}
+#create-table input[type=submit] {
+    cursor: pointer;
+    background: #1e66d3;
+    color: #fff;
+    border: 2px solid #1e66d3;
+}
+.shortcode > pre {
+    font-size: 12pt;
+    display: table-cell;
+    padding: 2px 6px 3px;
+    margin: 5px 0;
+    background: #3c3c3c;
+    color: #fff;
+}
