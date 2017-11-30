@@ -1,3 +1,6 @@
+#WPDBQRT-admin h1 {
+    padding: 3px;
+}
 #WPDBQRT-admin div {
     padding: 5px;
 }
@@ -24,6 +27,14 @@ div#delete-table {
     background: #1e66d3;
     color: #fff;
     border: 2px solid #1e66d3;
+}
+.shortcode {
+    margin-bottom: 1em;
+}
+.shortcode p {
+    padding: 0;
+    margin: 0;
+    font-weight: bold;
 }
 .shortcode > pre {
     font-size: 12pt;

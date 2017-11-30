@@ -47,7 +47,7 @@ class DBQuery_Report_Table {
 	} 
 
 	// Add settings link to plugin
-	function plugin_add_settings_link( $links )
+	public function plugin_add_settings_link( $links )
 	{
 		$settings_link = '<a href="admin.php?page=dbquery-report-settings">' . __( 'Settings', 'textdomain' ) . '</a>';
 		array_unshift( $links, $settings_link );
@@ -61,7 +61,7 @@ class DBQuery_Report_Table {
 	}
 
 	/* dbquery Report Table Settings Admin Page */
-	function dbquery_report_table_admin_page()
+	public static function dbquery_report_table_admin_page()
 	{
 		if ( !current_user_can('administrator') ) {
 			wp_die('You shall not pass!');
@@ -107,7 +107,7 @@ class DBQuery_Report_Table {
 		} 
 	}
 
-	public function dbquery_report_new_form_query()
+	public static function dbquery_report_new_form_query()
 	{
 		global $wpdb;
 		if ( ! isset( $_POST['dbquery_report_new_form_query_nonce'] ) || ! wp_verify_nonce( $_POST['dbquery_report_new_form_query_nonce'], 'dbquery_report_new_form_query' ) ) {
@@ -128,7 +128,7 @@ class DBQuery_Report_Table {
 		}
 	}
 
-	public function dbquery_report_delete_form_query()
+	public static function dbquery_report_delete_form_query()
 	{
 		global $wpdb;
 		if ( ! isset( $_POST['dbquery_report_delete_form_query_nonce'] ) || ! wp_verify_nonce( $_POST['dbquery_report_delete_form_query_nonce'], 'dbquery_report_delete_form_query' ) ) {
@@ -149,7 +149,7 @@ class DBQuery_Report_Table {
 		}
 	}
 
-	public function dbquery_report_table_head_update_query()
+	public static function dbquery_report_table_head_update_query()
 	{
 		global $wpdb;
 		if( isset($_POST['dbquery_report_table_head_content']) && isset($_POST['dbquery_report_table_id']) ){
@@ -170,7 +170,7 @@ class DBQuery_Report_Table {
 		}
 	}
 
-	public function dbquery_report_dbquery_update_query()
+	public static function dbquery_report_dbquery_update_query()
 	{
 		global $wpdb;
 		if ( ! isset( $_POST['dbquery_report_dbquery_update_query_nonce'] ) || ! wp_verify_nonce( $_POST['dbquery_report_dbquery_update_query_nonce'], 'dbquery_report_dbquery_update_query' ) ) {
@@ -233,47 +233,41 @@ class DBQuery_Report_Table {
 	}
 
 	// return table head HTML from DB
-	public function get_dbquery_report_table_head_content($id= null)
+	protected function get_dbquery_report_table_head_content($id = null)
 	{
-		if (empty($id)){
-			return;
-		}
-		global $wpdb;
-		$table_name = $wpdb->prefix . 'dbquery_report_table';
-		$query = $wpdb->get_results("SELECT report_table_head_content FROM $table_name WHERE id = $id");
-		foreach ($query as $key => $value)
+		if ($id == intval($id) > 0){
+			global $wpdb;
+			$table_name = $wpdb->prefix . 'dbquery_report_table';
+			$query = $wpdb->get_results("SELECT report_table_head_content FROM $table_name WHERE id = $id");
+			foreach ($query as $key => $value)
 			{
-			if ($key == 'report_table_head_content') {
-				return $value->report_table_head_content;
-			}
-			else {
-				return;
+				if ($key == 'report_table_head_content') {
+					return $value->report_table_head_content;
+				}
 			}
 		}
+		return;
 	}
 
 	// return dbquery query from DB
-	public function get_dbquery_report_table_query($id = null)
+	protected function get_dbquery_report_table_query($id = null)
 	{
-		if (empty($id)){
-			return;
-		}
-		global $wpdb;
-		$table_name = $wpdb->prefix . 'dbquery_report_table';
-		$query = $wpdb->get_results("SELECT report_table_query FROM $table_name WHERE id = '$id'");
-		foreach ($query as $key => $value)
+		if ($id == intval($id) > 0){
+			global $wpdb;
+			$table_name = $wpdb->prefix . 'dbquery_report_table';
+			$query = $wpdb->get_results("SELECT report_table_query FROM $table_name WHERE id = '$id'");
+			foreach ($query as $key => $value)
 			{
-			if ($key == 'report_table_query') {
-				return $value->report_table_query;
-			}
-			else {
-				return;
+				if ($key == 'report_table_query') {
+					return $value->report_table_query;
+				}
 			}
 		}
+		return;
 	}
 
 	// if function passed to this returns empty then show error
-	public function dbquery_report_table_validate_error($returnedValue)
+	protected function dbquery_report_table_validate_error($returnedValue)
 	{
 		if (empty($returnedValue)) {
 			return '<p style="color: #e11; font-size= 0.8em;">You must enter a value for table to work properly</p>';
@@ -316,9 +310,7 @@ class DBQuery_Report_Table {
 				$html .= '<td class="wpdbqrt_data_' . $cellCount . '">' . htmlspecialchars($value, ENT_QUOTES) . "</td>";
 				$cellCount++;
 				$totalCount++;
-				if($rowCount < 2) {
-					$rowCellCount += 1;
-				}
+				if($rowCount < 2) $rowCellCount += 1;
 			}
 			$html .= '</tr>';
 			$rowCount++;
@@ -347,7 +339,7 @@ class DBQuery_Report_Table {
 		for( $cellNo = 1; $cellNo <= $rowCellCount; $cellNo++ ){
 			$html .= 'wpdbqrt_data_' . $cellNo . '","';
 		}	
-		$html .= '"]};';
+		$html .= '"], indexAsync = true; };';
 		$html .= ' var list_report_table_' . htmlspecialchars($id, ENT_QUOTES) . ' = new List("wpdbqrt-table-wrapper_' . htmlspecialchars($id, ENT_QUOTES) . '", options );';
 		$html .= '</script>';
 		return $html;
