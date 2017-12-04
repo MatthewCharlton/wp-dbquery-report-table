@@ -291,8 +291,8 @@ class DBQuery_Report_Table {
 		if(!$report_table_results = $wpdb->get_results($report_table_query, ARRAY_A)){
 			return '[WPDBQRT id="' . htmlspecialchars($id, ENT_QUOTES) . '"]';
 		}
-		$html = '<div id="wpdbqrt-table-wrapper_' . htmlspecialchars($id, ENT_QUOTES) . '" class="wpdbqrt-table-wrapper">';
-		$html .= '<table id="report_table_' . htmlspecialchars($id, ENT_QUOTES) . '" class="wpdbqrt-table table-responsive">';
+		$html = '<div id="wpdbqrt_table_wrapper_' . htmlspecialchars($id, ENT_QUOTES) . '" class="wpdbqrt-table-wrapper">';
+		$html .= '<table id="wpdbqrt_table_' . htmlspecialchars($id, ENT_QUOTES) . '" class="wpdbqrt-table table-responsive">';
 		$html .= '<input id="wpdbqrt_search_' . htmlspecialchars($id, ENT_QUOTES) . '" class="fuzzy-search searchbox" placeholder="Search" />';
 		if (!empty($this->get_dbquery_report_table_head_content($id))) {
 			$html .= "<thead>";
