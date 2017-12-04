@@ -14,23 +14,26 @@ class DBQuery_Report_Table_Form extends DBQuery_Report_Table {
 
     protected function show_report_tables()
     {
-        ob_start();
-        $html = '<div id="WPDBQRT-admin">';
-        $html .= "<h1>DBQuery Report Table Settings</h1>";
-        $lastValue = 0;
-        if($form_ids = $this->dbquery_get_form_ids_query()){
-            foreach ($form_ids as $key => $value) {
-                $divClass = ($value['id'] % 2 === 0) ? 'evens' : 'odds';
-                $html .= '<div class="' . $divClass . '">';
-                $html .= $this->form_output( $value['id'] );
-                $html .= '</div>';
-                $lastValue = $value['id'];
+        
+        if (is_admin()){
+            ob_start();
+            $html = '<div id="WPDBQRT-admin">';
+            $html .= "<h1>DBQuery Report Table Settings</h1>";
+            $lastValue = 0;
+            if($form_ids = $this->dbquery_get_form_ids_query()){
+                foreach ($form_ids as $key => $value) {
+                    $divClass = ($value['id'] % 2 === 0) ? 'evens' : 'odds';
+                    $html .= '<div class="' . $divClass . '">';
+                    $html .= $this->form_output( $value['id'] );
+                    $html .= '</div>';
+                    $lastValue = $value['id'];
+                }
             }
+            $html .= $this->create_button( $lastValue );
+            $html .= '</div>';
+            ob_end_flush();
+            return $html;
         }
-        $html .= $this->create_button( $lastValue );
-        $html .= '</div>';
-        ob_end_flush();
-        return $html;
     }
 
     protected function create_button($id = null){
