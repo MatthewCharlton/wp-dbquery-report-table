@@ -3,6 +3,10 @@
 defined('ABSPATH') or die('Computer says no!');
 
 class DBQuery_Report_Table {
+
+	public function __clone() {
+		_doing_it_wrong( __FUNCTION__, __( 'Cheatin&#8217; huh?' ), '1.0' );
+	}
 	
 	/**
 	 * Initializes WordPress hooks
@@ -13,7 +17,7 @@ class DBQuery_Report_Table {
 		add_action('admin_menu', array($this, 'dbquery_report_table_menu'));
 		/* Add settings link */
 		add_filter( 'plugin_action_links_' . WPDBQRT__PLUGIN_BASENAME , array($this,  'plugin_add_settings_link' ));
-		// add admin menu scripts ans styles
+		// add admin menu scripts
 		add_action( 'admin_enqueue_scripts', array($this, 'enqueue_admin_scripts' ));
 		// Add frontend scripts
 		add_action( 'wp_enqueue_scripts', array($this, 'enqueue_front_end_scripts' ));
@@ -31,13 +35,15 @@ class DBQuery_Report_Table {
 	}
 
 	// Enqueue Admin scripts and styles
-	public function enqueue_admin_scripts($hook) 
+	public function enqueue_admin_scripts() 
 	{
-		if($hook != 'toplevel_page_dbquery-report-settings') {
-			return;
-		}
 		wp_enqueue_script( 'dbquery-report-table-js', plugins_url('js/dbquery-report-table.js', __FILE__) );
-		wp_enqueue_style( 'dbquery-report-table-styles', plugins_url('css/dbquery-report-table-styles.css', __FILE__) );
+	}
+
+	public function enqueue_admin_styles() 
+	{
+		wp_register_style( 'dbquery-report-table-styles', plugins_url('css/dbquery-report-table.css', __FILE__) );
+		wp_enqueue_style('dbquery-report-table-styles');
 	}
 
 	// Enqueue frontend scripts
@@ -49,7 +55,7 @@ class DBQuery_Report_Table {
 	// Add settings link to plugin
 	public function plugin_add_settings_link( $links )
 	{
-		$settings_link = '<a href="admin.php?page=dbquery-report-settings">' . __( 'Settings', 'textdomain' ) . '</a>';
+		$settings_link = '<a href="admin.php?page=dbquery-report-table">' . __( 'Settings', 'textdomain' ) . '</a>';
 		array_unshift( $links, $settings_link );
 		  return $links;
 	}
@@ -57,19 +63,37 @@ class DBQuery_Report_Table {
 	/* Menu Setup */
 	public function dbquery_report_table_menu()
 	{
-		add_menu_page('DBQuery Report Table Admin Settings', 'DBQuery Report Table Settings', 'manage_options', 'dbquery-report-settings', array($this, 'dbquery_report_table_admin_page'));
+		$admin_main_menu = add_menu_page('DBQuery Report Table', 'DBQuery Report Table', 'manage_options', 'dbquery-report-table', array($this, 'dbquery_report_table_list'));
+		$admin_submenu = add_submenu_page('dbquery-report-table', 'DBQuery Report Table Settings', 'Report Table Form', 'manage_options', 'dbquery-report-table-form', array($this, 'dbquery_report_table_form'));
+
+		// add admin menu styles
+		add_action( 'admin_print_styles-' . $admin_main_menu, array($this, 'enqueue_admin_styles' ));
+		add_action( 'admin_print_styles-' . $admin_submenu, array($this, 'enqueue_admin_styles' ));
 	}
 
 	/* dbquery Report Table Settings Admin Page */
-	public static function dbquery_report_table_admin_page()
+	public static function dbquery_report_table_list()
 	{
 		if ( !current_user_can('administrator') ) {
 			wp_die('You shall not pass!');
 		}
-
+		echo '<div id="WPDBQRT-admin">';
+		echo "<h1>DBQuery Report Table</h1>";
 		$dbquery_report_list = new DBQuery_Report_Table_Form();
-		echo $dbquery_report_list->show_report_tables();
+		echo $dbquery_report_list->list_report_tables();
+		echo "</div>";
+	}	
 
+	public static function dbquery_report_table_form()
+	{
+		if ( !current_user_can('administrator') ) {
+			wp_die('You shall not pass!');
+		}
+		echo '<div id="WPDBQRT-form">';
+		echo "<h1>DBQuery Report Table Form</h1>";
+		$dbquery_report_form = new DBQuery_Report_Table_Form();
+		echo $dbquery_report_form->report_table_form();
+		echo "</div>";
 	}	
 
     public static function dbquery_report_table_remove()
@@ -91,7 +115,7 @@ class DBQuery_Report_Table {
         $charset_collate = $wpdb->get_charset_collate();
         $table_name = $wpdb->prefix . 'dbquery_report_table';
 		$result = $wpdb->get_results("SHOW TABLES LIKE '$table_name'", ARRAY_A);
-		if( count($result) == 0 ) {
+		if( count($result) === 0 ) {
 			$setupPluginQuery = "SELECT * FROM " . $wpdb->prefix . "comments";
 			$charset_collate = $wpdb->get_charset_collate();
 			$table_name = $wpdb->prefix . 'dbquery_report_table';
@@ -117,12 +141,12 @@ class DBQuery_Report_Table {
 			if( isset($_POST['dbquery_report_table_id']) && isset($_POST['new_dbquery_report_table']) ){
 				$id = intval($_POST['dbquery_report_table_id']);
 				if ($id === 0){
-					wp_redirect(admin_url("admin.php?page=dbquery-report-settings"));
+					wp_redirect(admin_url("admin.php?page=dbquery-report-table"));
 					exit;
 				}
 				$table_name = $wpdb->prefix . 'dbquery_report_table';
 				$wpdb->query("INSERT INTO $table_name (id) VALUES ('$id')");
-				wp_redirect(admin_url("admin.php?page=dbquery-report-settings"));
+				wp_redirect(admin_url("admin.php?page=dbquery-report-table-form"));
 				exit;
 			}
 		}
@@ -138,12 +162,12 @@ class DBQuery_Report_Table {
 			if( isset($_POST['dbquery_report_table_id']) && isset($_POST['delete_dbquery_report_table']) ){
 				$id = intval($_POST['dbquery_report_table_id']);
 				if ($id === 0){
-					wp_redirect(admin_url("admin.php?page=dbquery-report-settings"));
+					wp_redirect(admin_url("admin.php?page=dbquery-report-table"));
 					exit;
 				}
 				$table_name = $wpdb->prefix . 'dbquery_report_table';
 				$wpdb->query("DELETE FROM $table_name WHERE id = '$id'");
-				wp_redirect(admin_url("admin.php?page=dbquery-report-settings"));
+				wp_redirect(admin_url("admin.php?page=dbquery-report-table"));
 				exit;
 			}
 		}
@@ -155,7 +179,7 @@ class DBQuery_Report_Table {
 		if( isset($_POST['dbquery_report_table_head_content']) && isset($_POST['dbquery_report_table_id']) ){
 			$id = intval($_POST['dbquery_report_table_id']);
 			if ($id === 0) {
-				wp_redirect(admin_url("admin.php?page=dbquery-report-settings"));
+				wp_redirect(admin_url("admin.php?page=dbquery-report-table"));
 				exit;
 			}
 
@@ -165,7 +189,7 @@ class DBQuery_Report_Table {
 
 			$table_name = $wpdb->prefix . 'dbquery_report_table';
 			$wpdb->query("UPDATE $table_name SET report_table_head_content = '" . $submittedElements . "' WHERE id = $id");
-			wp_redirect(admin_url("admin.php?page=dbquery-report-settings"));
+			wp_redirect(admin_url("admin.php?page=dbquery-report-table"));
 			exit;
 		}
 	}
@@ -178,7 +202,7 @@ class DBQuery_Report_Table {
 			exit;
 		} else {
 			if( !isset($_POST['dbquery_report_table_query']) && !isset($_POST['dbquery_report_table_id']) && intval($_POST['dbquery_report_table_id']) === 0 ){
-				wp_redirect(admin_url("admin.php?page=dbquery-report-settings"));
+				wp_redirect(admin_url("admin.php?page=dbquery-report-table"));
 				exit;
 			}
 			$id = intval($_POST['dbquery_report_table_id']);
@@ -217,16 +241,16 @@ class DBQuery_Report_Table {
 					$validationError = "";
 					$table_name = $wpdb->prefix . 'dbquery_report_table';
 					$result = $wpdb->query("UPDATE $table_name SET report_table_query = '$query' WHERE id = $id");
-					wp_redirect(admin_url("admin.php?page=dbquery-report-settings"));
+					wp_redirect(admin_url("admin.php?page=dbquery-report-table"));
 					exit;
 				}
 				else {
-					wp_redirect(admin_url("admin.php?page=dbquery-report-settings"));
+					wp_redirect(admin_url("admin.php?page=dbquery-report-table"));
 					exit;
 				}
 			}
 			else {
-				wp_redirect(admin_url("admin.php?page=dbquery-report-settings"));
+				wp_redirect(admin_url("admin.php?page=dbquery-report-table"));
 				exit;
 			}
 		}

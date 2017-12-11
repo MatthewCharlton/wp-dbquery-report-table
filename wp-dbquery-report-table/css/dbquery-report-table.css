@@ -1,0 +1,66 @@
+div#WPDBQRT-form {
+    max-width: 95%;
+}
+#WPDBQRT-admin h1, #WPDBQRT-form h1 {
+    padding: 3px;
+    line-height: 1.1;
+    margin-bottom: 5px;
+}
+#WPDBQRT-admin div {
+    padding: 5px;
+}
+#WPDBQRT-form textarea {
+    max-width: 99%;
+}
+#WPDBQRT-admin .wpmrt-controls {
+    font-weight: normal;
+    text-transform: capitalize;
+    border-radius: 3px;
+}
+.evens {
+    background: #f7f7f7;
+}
+#WPDBQRT_admin_delete_table {
+    display: inline-block;
+}
+#WPDBQRT_admin_delete_table input[type=submit] {
+    margin-left: 15px;
+    cursor: pointer;
+    background: #dc372e;
+    color: #fff;
+    border: 2px solid #dc372e;
+}
+#WPDBQRT_admin_create_table input[type=submit] {
+    cursor: pointer;
+    background: #1e66d3;
+    color: #fff;
+    border: 2px solid #1e66d3;
+}
+.dbquery-report-table tr {
+    height: 2em;
+}
+.dbquery-report-table tr td {
+    font-size: 1.2em;
+}
+.dbquery-report-table thead td {
+    font-size: 1.3em;
+    font-weight: bold;
+}
+.dbquery-report-table tr td:first-child {
+    padding-right: 20px;
+}
+.dbquery-report-table tr td:last-child {
+    padding-left: 20px;
+    padding-right: 10px;
+}
+.shortcode {
+    min-width: 8.5em;
+    text-align: center;
+    padding: 6px;
+    background: #575757;
+    color: #fff;
+    -webkit-user-select: all;  /* Chrome all / Safari all */
+    -moz-user-select: all;     /* Firefox all */
+    -ms-user-select: all;      /* IE 10+ */
+    user-select: all;   
+}

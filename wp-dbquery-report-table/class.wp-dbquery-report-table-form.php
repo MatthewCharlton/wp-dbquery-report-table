@@ -12,51 +12,68 @@ class DBQuery_Report_Table_Form extends DBQuery_Report_Table {
         return $ids_array;
     }
 
-    protected function show_report_tables()
+    protected function list_report_tables()
     {
         if ( is_admin() ) {
             ob_start();
-            $html = '<div id="WPDBQRT-admin">';
-            $html .= "<h1>DBQuery Report Table Settings</h1>";
+            $html = '<table class="table-responsive dbquery-report-table">';
+            $html .= '<thead><tr><td>Name</td><td>Shortcode</td><td></td></tr></thead><tbody>';
             $table_id_array = array();
             $lastValue = 0;
             if($form_ids = $this->dbquery_get_form_ids_query()){
                 foreach ($form_ids as $key => $value) {
                     $divClass = ($value['id'] % 2 === 0) ? 'evens' : 'odds';
-                    $html .= '<div class="' . $divClass . '">';
-                    $html .= $this->form_output( $value['id'] );
-                    $html .= '</div>';
+                    $html .= '<tr class="' . $divClass . '">';
+                    $html .= '<td>DBQuery Report Table ' . $value['id'] . '</td><td class="shortcode">[WPDBQRT id="' . htmlspecialchars($value['id'], ENT_QUOTES) . '"]</td><td><a href="' . esc_url( admin_url("admin.php?page=dbquery-report-table-form&id=" . $value['id']) ) . '">Edit</a></td>';
+                    $html .= '</tr>';
                     $lastValue = $value['id'];
                     $table_id_array[] = $value['id'];
                 }
             }
+            $html .= "</tbody></table>";
             $html .= $this->create_button( $lastValue );
-            $html .= '</div>';
-            $html .= '<div id="WPDBQRT-admin-tables-nav-list">';
-            $html .= '<ul>';
-            foreach($table_id_array as $tableID){
-                $html .= (count($table_id_array) > 1) ? '<a href="#WPDBQRT_admin_form_' . htmlspecialchars($tableID, ENT_QUOTES) . '"><li>' . $tableID . '</li></a>' : '';
+            ob_end_flush();
+            return $html;
+        }
+    }
+
+    protected function report_table_form()
+    {
+        if ( is_admin() ) {
+            ob_start();
+            $html = "";
+            if( isset($_REQUEST['id']) ){
+                $id = intval($_REQUEST['id']);
+                $html .= $this->form_output( $id );
+            } else {
+                $lastValue = 0;
+                if($form_ids = $this->dbquery_get_form_ids_query()){
+                    foreach ($form_ids as $key => $value) {
+                        $lastValue = $value['id'];
+                    }
+                }
+                $html .= $this->form_output( $lastValue );
             }
-            $html .= '</ul>';
-            $html .= '</div>';
             ob_end_flush();
             return $html;
         }
     }
 
     protected function create_button($id = null){
-        $html = '<div id="WPDBQRT_admin_create_table" class="WPDBQRT-controls create-table"><form method="POST" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '">
+        $html = '<div id="WPDBQRT_admin_create_table" class="WPDBQRT-controls create-table">
+        <form method="POST" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '">
         <input type="hidden" name="dbquery_report_table_id" value="' . ($id + 1). '" />
         <input type="hidden" name="action" value="dbquery_report_new_form_query" />
         <input type="hidden" name="new_dbquery_report_table" value="' . ($id + 1). '" />
         ' . wp_nonce_field( 'dbquery_report_new_form_query', 'dbquery_report_new_form_query_nonce' ) . '
         <input type="submit" value="Create New Table" />
-        </form></div>';
+        </form>
+        </div>';
         return $html;
     }
 
     protected function delete_button($id = null){
-        $html = '<div id="WPDBQRT_admin_delete_table_' . htmlspecialchars($id, ENT_QUOTES) . '" class="WPDBQRT-controls delete-table"><form method="POST" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '">
+        $html = '<div id="WPDBQRT_admin_delete_table" class="WPDBQRT-controls delete-table"><form method="POST" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '">
         <input type="hidden" name="dbquery_report_table_id" value="' . htmlspecialchars($id, ENT_QUOTES) . '" />
         <input type="hidden" name="action" value="dbquery_report_delete_form_query" />
         <input type="hidden" name="delete_dbquery_report_table" value="' . htmlspecialchars($id, ENT_QUOTES). '" />
@@ -66,10 +83,10 @@ class DBQuery_Report_Table_Form extends DBQuery_Report_Table {
         return $html;
     }
     
-    private function form_output($id)
+    protected function form_output($id = null)
     {
         return '
-        <div id="WPDBQRT_admin_form_' . htmlspecialchars($id, ENT_QUOTES) . '"></div>
+        <div class="report-table-form" id="WPDBQRT_admin_form_' . htmlspecialchars($id, ENT_QUOTES) . '">
         <h3 class="report-table-header">DBQuery Report Table  ' . htmlspecialchars($id, ENT_QUOTES) . " " . $this->delete_button($id) . '</h3>
         <h4>Remember to make a backup of your database before proceeding and you must only use SELECT statements in your query or you might break your database</h4>
         <label>Enter query</label>
@@ -98,7 +115,6 @@ class DBQuery_Report_Table_Form extends DBQuery_Report_Table {
             ' . wp_nonce_field() . '
             <input type="submit" name="report_table_head_update_query_submit" value="Update" />
         </form>
-        <br>
-        <div class="shortcode"><p>Use shortcode</p><br><pre>[WPDBQRT id="' . htmlspecialchars($id, ENT_QUOTES) . '"]</pre><br><p>on any page to display results table</p></div>';
+        </div>';
     }
 }
