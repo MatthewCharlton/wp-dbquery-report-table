@@ -64,7 +64,7 @@ class DBQuery_Report_Table {
 	public function dbquery_report_table_menu()
 	{
 		$admin_main_menu = add_menu_page('DBQuery Report Table', 'DBQuery Report Table', 'manage_options', 'dbquery-report-table', array($this, 'dbquery_report_table_list'));
-		$admin_submenu = add_submenu_page('dbquery-report-table', 'DBQuery Report Table Settings', 'Report Table Form', 'manage_options', 'dbquery-report-table-form', array($this, 'dbquery_report_table_form'));
+		$admin_submenu = add_submenu_page('', 'DBQuery Report Table Form', 'Report Table Form', 'manage_options', 'dbquery-report-table-form', array($this, 'dbquery_report_table_form'));
 
 		// add admin menu styles
 		add_action( 'admin_print_styles-' . $admin_main_menu, array($this, 'enqueue_admin_styles' ));

@@ -42,7 +42,7 @@ class DBQuery_Report_Table_Form extends DBQuery_Report_Table {
         if ( is_admin() ) {
             ob_start();
             $html = "";
-            if( isset($_REQUEST['id']) ){
+            if( isset($_REQUEST['id']) && !empty($_REQUEST['id']) ){
                 $id = intval($_REQUEST['id']);
                 $html .= $this->form_output( $id );
             } else {
