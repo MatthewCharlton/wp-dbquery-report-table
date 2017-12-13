@@ -12,6 +12,20 @@ div#WPDBQRT-form {
 #WPDBQRT-form textarea {
     max-width: 99%;
 }
+#WPDBQRT-form .form-header > * {
+    display: inline-block;
+}
+#WPDBQRT-form .back {
+    padding: 0;
+    font-size: 2em;
+    line-height: 1;
+    margin-right: 5px;
+}
+#WPDBQRT-form .back a {
+    display: block;
+    text-decoration: none;
+    padding: 2px 6px 6px;
+}
 #WPDBQRT-admin .wpmrt-controls {
     font-weight: normal;
     text-transform: capitalize;

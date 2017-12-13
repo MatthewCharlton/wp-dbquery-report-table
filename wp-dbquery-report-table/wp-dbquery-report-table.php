@@ -3,7 +3,7 @@
  * Plugin Name: DBQuery Report Table
  * Plugin URI: https://github.com/MatthewCharlton/wp-dbquery-report-table/
  * Description: This plugin allows you to query the DB and outputs the results in a table that you can show via a shortcode
- * Version: 1.3.2
+ * Version: 1.3.1
  * Author: Matt Charlton
  * Author URI: http://mattcharlton.id.au
  * License: GPLv2 or later
@@ -24,7 +24,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-Copyright 2017 Matt Charlton
+Copyright 2017 All in IT Solutions
 */
 
 defined('ABSPATH') or die('Computer says no!');
