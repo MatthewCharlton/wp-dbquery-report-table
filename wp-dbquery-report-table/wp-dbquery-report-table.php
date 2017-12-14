@@ -3,7 +3,7 @@
  * Plugin Name: DBQuery Report Table
  * Plugin URI: https://github.com/MatthewCharlton/wp-dbquery-report-table/
  * Description: This plugin allows you to query the DB and outputs the results in a table that you can show via a shortcode
- * Version: 1.3.1
+ * Version: 1.3.3
  * Author: Matt Charlton
  * Author URI: http://mattcharlton.id.au
  * License: GPLv2 or later
@@ -24,7 +24,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-Copyright 2017 All in IT Solutions
+Copyright 2017 Matthew Charlton
 */
 
 defined('ABSPATH') or die('Computer says no!');
@@ -35,12 +35,18 @@ if ( !function_exists( 'add_action' ) ) {
 	exit;
 }
 
-define( 'WPDBQRT__PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
-define( 'WPDBQRT__PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
-
-require_once( WPDBQRT__PLUGIN_DIR . 'class.wp-dbquery-report-table.php' );
-require_once( WPDBQRT__PLUGIN_DIR . 'class.wp-dbquery-report-table-form.php' );
-
-register_activation_hook( __FILE__, array( 'DBQuery_Report_Table', 'dbquery_report_table_activate' ) );
-register_deactivation_hook( __FILE__, array( 'DBQuery_Report_Table', 'dbquery_report_table_deactivate' ) );
-register_uninstall_hook( __FILE__, array( 'DBQuery_Report_Table', 'dbquery_report_table_remove' ) );
+if(!defined('WPDBQRT__PLUGIN_DIR'))
+{
+	define( 'WPDBQRT__PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
+	define( 'WPDBQRT__PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
+	
+	require_once( WPDBQRT__PLUGIN_DIR . 'wp-dbquery-report-table.class.php' );
+	require_once( WPDBQRT__PLUGIN_DIR . 'wp-dbquery-report-table-view.class.php' );
+	require_once( WPDBQRT__PLUGIN_DIR . 'wp-dbquery-report-table-model.class.php' );
+	
+	register_activation_hook( __FILE__, array( 'DBQueryReportTable', 'dbquery_report_table_activate' ) );
+	register_deactivation_hook( __FILE__, array( 'DBQueryReportTable', 'dbquery_report_table_deactivate' ) );
+	register_uninstall_hook( __FILE__, array( 'DBQueryReportTable', 'dbquery_report_table_remove' ) );
+	
+	$WPDBQRT = new DBQueryReportTable();
+}

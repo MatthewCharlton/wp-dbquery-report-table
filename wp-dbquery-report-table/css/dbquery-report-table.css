@@ -1,5 +1,6 @@
-div#WPDBQRT-form {
-    max-width: 95%;
+div#WPDBQRT-form, #WPDBQRT-admin {
+    padding: 20px 0 10px;
+    margin: 0 15px;
 }
 #WPDBQRT-admin h1, #WPDBQRT-form h1 {
     padding: 3px;
@@ -14,25 +15,34 @@ div#WPDBQRT-form {
 }
 #WPDBQRT-form .form-header > * {
     display: inline-block;
+    vertical-align: middle;
 }
 #WPDBQRT-form .back {
     padding: 0;
     font-size: 2em;
     line-height: 1;
-    margin-right: 5px;
+    margin-right: 10px;
+    background: #0591d6;
 }
 #WPDBQRT-form .back a {
     display: block;
     text-decoration: none;
-    padding: 2px 6px 6px;
+    padding: 2px 7px 6px;
+    color: #fff;
 }
 #WPDBQRT-admin .wpmrt-controls {
     font-weight: normal;
     text-transform: capitalize;
     border-radius: 3px;
 }
-.evens {
+#WPDBQRT-admin .evens {
     background: #f7f7f7;
+}
+#WPDBQRT-form .update-btn {
+    background: #0866ad;
+    color: #fff;
+    border: none;
+    padding: 5px 8px;
 }
 #WPDBQRT_admin_delete_table {
     display: inline-block;
