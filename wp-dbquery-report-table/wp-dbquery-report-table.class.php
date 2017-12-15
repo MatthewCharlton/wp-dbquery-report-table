@@ -47,16 +47,6 @@ class DBQueryReportTable
         array_unshift($links, $settings_link);
         return $links;
     }
-    
-    public static function dbquery_report_table_deactivate()
-    {
-        // TODO Add if needed
-    }
-
-    public static function dbquery_report_table_activate()
-    {
-        DBQueryReportTableModel::setup_database_tables();
-    }
 
     // if function passed to this returns empty then show error
     public static function dbquery_report_table_validate_error($returnedValue)

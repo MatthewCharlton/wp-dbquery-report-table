@@ -3,7 +3,7 @@
  * Plugin Name: DBQuery Report Table
  * Plugin URI: https://github.com/MatthewCharlton/wp-dbquery-report-table/
  * Description: This plugin allows you to query the DB and outputs the results in a table that you can show via a shortcode
- * Version: 1.3.3
+ * Version: 1.4.1
  * Author: Matt Charlton
  * Author URI: http://mattcharlton.id.au
  * License: GPLv2 or later
@@ -44,9 +44,8 @@ if(!defined('WPDBQRT__PLUGIN_DIR'))
 	require_once( WPDBQRT__PLUGIN_DIR . 'wp-dbquery-report-table-view.class.php' );
 	require_once( WPDBQRT__PLUGIN_DIR . 'wp-dbquery-report-table-model.class.php' );
 	
-	register_activation_hook( __FILE__, array( 'DBQueryReportTable', 'dbquery_report_table_activate' ) );
-	register_deactivation_hook( __FILE__, array( 'DBQueryReportTable', 'dbquery_report_table_deactivate' ) );
-	register_uninstall_hook( __FILE__, array( 'DBQueryReportTable', 'dbquery_report_table_remove' ) );
+	register_activation_hook( __FILE__, array( 'DBQueryReportTableModel', 'setup_database_tables' ) );
+	register_uninstall_hook( __FILE__, array( 'DBQueryReportTableModel', 'dbquery_report_table_remove' ) );
 	
 	$WPDBQRT = new DBQueryReportTable();
 }
