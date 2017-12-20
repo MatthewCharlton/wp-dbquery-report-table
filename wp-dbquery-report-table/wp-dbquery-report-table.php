@@ -1,9 +1,9 @@
 <?php
 /**
- * Plugin Name: DBQuery Report Table
+ * Plugin Name: DBQuery Report Table - V2
  * Plugin URI: https://github.com/MatthewCharlton/wp-dbquery-report-table/
  * Description: This plugin allows you to query the DB and outputs the results in a table that you can show via a shortcode
- * Version: 1.4.1
+ * Version: 2.0
  * Author: Matt Charlton
  * Author URI: http://mattcharlton.id.au
  * License: GPLv2 or later
@@ -30,22 +30,21 @@ Copyright 2017 Matthew Charlton
 defined('ABSPATH') or die('Computer says no!');
 
 // Make sure we don't expose any info if called directly
-if ( !function_exists( 'add_action' ) ) {
-	echo 'You shall not pass!';
-	exit;
+if (!function_exists('add_action')) {
+    echo 'You shall not pass!';
+    exit;
 }
 
-if(!defined('WPDBQRT__PLUGIN_DIR'))
-{
-	define( 'WPDBQRT__PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
-	define( 'WPDBQRT__PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
-	
-	require_once( WPDBQRT__PLUGIN_DIR . 'wp-dbquery-report-table.class.php' );
-	require_once( WPDBQRT__PLUGIN_DIR . 'wp-dbquery-report-table-view.class.php' );
-	require_once( WPDBQRT__PLUGIN_DIR . 'wp-dbquery-report-table-model.class.php' );
-	
-	register_activation_hook( __FILE__, array( 'DBQueryReportTableModel', 'setup_database_tables' ) );
-	register_uninstall_hook( __FILE__, array( 'DBQueryReportTableModel', 'dbquery_report_table_remove' ) );
-	
-	$WPDBQRT = new DBQueryReportTable();
+if (!defined('WPDBQRT__PLUGIN_DIR')) {
+    define('WPDBQRT__PLUGIN_DIR', plugin_dir_path(__FILE__));
+    define('WPDBQRT__PLUGIN_BASENAME', plugin_basename(__FILE__));
+    
+    require_once(WPDBQRT__PLUGIN_DIR . 'wp-dbquery-report-table.class.php');
+    require_once(WPDBQRT__PLUGIN_DIR . 'wp-dbquery-report-table-view.class.php');
+    require_once(WPDBQRT__PLUGIN_DIR . 'wp-dbquery-report-table-model.class.php');
+    
+    register_activation_hook(__FILE__, array( 'DBQueryReportTableModel', 'setup_database_tables' ));
+    register_uninstall_hook(__FILE__, array( 'DBQueryReportTableModel', 'dbquery_report_table_remove' ));
+    
+    $WPDBQRT = new DBQueryReportTable();
 }

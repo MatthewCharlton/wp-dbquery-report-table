@@ -2,23 +2,24 @@
 
 defined('ABSPATH') or die('Computer says no!');
 
-class DBQueryReportTableView {
+class DBQueryReportTableView
+{
 
     /**
      * Initializes WordPress hooks
      */
     public function __construct()
     {
-        // Add Menu to Settings 
+        // Add Menu to Settings
         add_action('admin_menu', array($this, 'dbquery_report_table_menu'));
         // add admin menu scripts
         add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_scripts' ));
-        // add admin notices
+        // // add admin notices
         add_action('admin_notices', array($this, 'dbquery_report_table_success_notice'));
         add_action('admin_notices', array($this, 'dbquery_report_table_error_notice'));
     }
 
-    // Menu Setup 
+    // Menu Setup
     public function dbquery_report_table_menu()
     {
         $admin_main_menu = add_menu_page('DBQuery Report Table', 'DBQuery Report Table', 'manage_options', 'dbquery-report-table', array($this, 'dbquery_report_table_list'));
@@ -32,7 +33,11 @@ class DBQueryReportTableView {
     // Enqueue Admin scripts and styles
     public function enqueue_admin_scripts()
     {
-        wp_enqueue_script('dbquery-report-table-js', plugins_url('js/dbquery-report-table.js', __FILE__));
+        // load our jquery file that sends the $.post request
+        wp_enqueue_script('dbquery-report-table-js', plugins_url('js/dbquery-report-table.js', __FILE__), array( 'jquery' ));
+
+        // make the ajaxurl var available to the above script
+        wp_localize_script('dbquery-report-table-js', 'the_ajax_script', array( 'ajaxurl' => admin_url('admin-ajax.php') ));
     }
 
     public function enqueue_admin_styles()
@@ -42,14 +47,15 @@ class DBQueryReportTableView {
     }
 
     // Setup admin success notice
-    public static function dbquery_report_table_success_notice() 
+    public static function dbquery_report_table_success_notice()
     {
-        $message = get_transient(  get_current_user_id() . '_wp_query_report_table_success_notice' );
+        $message = get_transient(get_current_user_id() . '_wp_query_report_table_success_notice');
 
-        if ( $message ) {
-            delete_transient(  get_current_user_id() . '_wp_query_report_table_success_notice' );
+        if ($message) {
+            delete_transient(get_current_user_id() . '_wp_query_report_table_success_notice');
 
-            printf( '<div class="%1$s"><p>%2$s</p></div>',
+            printf(
+                '<div class="%1$s"><p>%2$s</p></div>',
                 'notice notice-success is-dismissible wpdbqrt_admin_notice',
                 $message
             );
@@ -57,14 +63,15 @@ class DBQueryReportTableView {
     }
 
     // Setup admin error notice
-    public static function dbquery_report_table_error_notice() 
+    public static function dbquery_report_table_error_notice()
     {
-        $message = get_transient(  get_current_user_id() . '_wp_query_report_table_error_notice' );
+        $message = get_transient(get_current_user_id() . '_wp_query_report_table_error_notice');
 
-        if ( $message ) {
-            delete_transient(  get_current_user_id() . '_wp_query_report_table_error_notice' );
+        if ($message) {
+            delete_transient(get_current_user_id() . '_wp_query_report_table_error_notice');
 
-            printf( '<div class="%1$s"><p>%2$s</p></div>',
+            printf(
+                '<div class="%1$s"><p>%2$s</p></div>',
                 'notice notice-error is-dismissible wpdbqrt_admin_notice',
                 $message
             );
@@ -74,7 +81,7 @@ class DBQueryReportTableView {
     /* dbquery Report Table Settings Admin Page */
     public static function dbquery_report_table_list()
     {
-        if (!current_user_can('administrator')) {
+        if (!current_user_can('manage_options')) {
             wp_die('You shall not pass!');
         }
         echo '<div id="WPDBQRT-admin">';
@@ -96,24 +103,24 @@ class DBQueryReportTableView {
 
     public static function list_report_tables()
     {
-        if ( is_admin() ) {
+        if (is_admin()) {
             ob_start();
             $html = '<table class="table-responsive dbquery-report-table">';
             $html .= '<thead><tr><td>Name</td><td>Shortcode</td><td></td></tr></thead><tbody>';
             $tableIDArray = array();
             $lastValue = 0;
-            if($form_ids = DBQueryReportTableModel::dbquery_get_form_ids_query()){
+            if ($form_ids = DBQueryReportTableModel::dbquery_get_form_ids_query()) {
                 foreach ($form_ids as $key => $value) {
                     $divClass = ($value['id'] % 2 === 0) ? 'evens' : 'odds';
                     $html .= '<tr class="' . $divClass . '">';
-                    $html .= '<td>DBQuery Report Table ' . $value['id'] . '</td><td class="shortcode">[WPDBQRT id="' . htmlspecialchars($value['id'], ENT_QUOTES) . '"]</td><td><a href="' . esc_url( admin_url("admin.php?page=dbquery-report-table-form&id=" . $value['id']) ) . '">Edit</a></td>';
+                    $html .= '<td>DBQuery Report Table ' . $value['id'] . '</td><td class="shortcode">[WPDBQRT id="' . htmlspecialchars($value['id'], ENT_QUOTES) . '"]</td><td><a href="' . esc_url(admin_url("admin.php?page=dbquery-report-table-form&id=" . $value['id'])) . '">Edit</a></td>';
                     $html .= '</tr>';
                     $lastValue = $value['id'];
                     $tableIDArray[] = $value['id'];
                 }
             }
             $html .= "</tbody></table>";
-            $html .= self::create_button( $lastValue );
+            $html .= self::create_button($lastValue);
             ob_end_flush();
             return $html;
         }
@@ -121,45 +128,47 @@ class DBQueryReportTableView {
 
     protected static function report_table_form()
     {
-        if ( is_admin() ) {
+        if (is_admin()) {
             ob_start();
             $html = "";
-            if( isset($_REQUEST['id']) && !empty($_REQUEST['id']) ){
+            if (isset($_REQUEST['id']) && !empty($_REQUEST['id'])) {
                 $id = intval($_REQUEST['id']);
-                $html .= self::form_output( $id );
+                $html .= self::form_output($id);
             } else {
                 $lastValue = 0;
-                if($form_ids = DBQueryReportTableModel::dbquery_get_form_ids_query()){
+                if ($form_ids = DBQueryReportTableModel::dbquery_get_form_ids_query()) {
                     foreach ($form_ids as $key => $value) {
                         $lastValue = $value['id'];
                     }
                 }
-                $html .= self::form_output( $lastValue );
+                $html .= self::form_output($lastValue);
             }
             ob_end_flush();
             return $html;
         }
     }
 
-    protected static function create_button($id = null){
+    protected static function create_button($id = null)
+    {
         $html = '<div id="WPDBQRT_admin_create_table" class="WPDBQRT-controls create-table">
-        <form method="POST" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '">
+        <form method="POST" action="' . esc_url(admin_url('admin-post.php')) . '">
         <input type="hidden" name="dbquery_report_table_id" value="' . ($id + 1). '" />
         <input type="hidden" name="action" value="dbquery_report_new_form_query" />
         <input type="hidden" name="new_dbquery_report_table" value="' . ($id + 1). '" />
-        ' . wp_nonce_field( 'dbquery_report_new_form_query', 'dbquery_report_new_form_query_nonce' ) . '
+        ' . wp_nonce_field('dbquery_report_new_form_query', 'dbquery_report_new_form_query_nonce') . '
         <input type="submit" value="Create New Table" />
         </form>
         </div>';
         return $html;
     }
 
-    protected static function delete_button($id = null){
-        $html = '<div id="WPDBQRT_admin_delete_table" class="WPDBQRT-controls delete-table"><form method="POST" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '">
+    protected static function delete_button($id = null)
+    {
+        $html = '<div id="WPDBQRT_admin_delete_table" class="WPDBQRT-controls delete-table"><form method="POST" action="' . esc_url(admin_url('admin-post.php')) . '">
         <input type="hidden" name="dbquery_report_table_id" value="' . htmlspecialchars($id, ENT_QUOTES) . '" />
         <input type="hidden" name="action" value="dbquery_report_delete_form_query" />
         <input type="hidden" name="delete_dbquery_report_table" value="' . htmlspecialchars($id, ENT_QUOTES). '" />
-        ' . wp_nonce_field( 'dbquery_report_delete_form_query', 'dbquery_report_delete_form_query_nonce' ) . '
+        ' . wp_nonce_field('dbquery_report_delete_form_query', 'dbquery_report_delete_form_query_nonce') . '
         <input type="submit" onclick="return confirmDelete(' . htmlspecialchars($id, ENT_QUOTES) . ')" value="Delete" />
         </form></div>';
         return $html;
@@ -173,28 +182,28 @@ class DBQueryReportTableView {
         <h4>Remember to make a backup of your database before proceeding and you must only use SELECT statements in your query or you might break your database</h4>
         <label>Enter query</label>
         <br>
-        <form method="POST" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '">
+        <form id="dbquery_report_table_query_form">
             <textarea cols="150" rows="4" name="dbquery_report_table_query">' . htmlspecialchars(DBQueryReportTableModel::get_dbquery_report_table_query($id), ENT_QUOTES) . '</textarea>
             <input type="hidden" name="dbquery_report_table_id" value="' . htmlspecialchars($id, ENT_QUOTES) . '"/>
             <input type="hidden" name="action" value="dbquery_report_dbquery_update_query" />
             <br>
-            ' . wp_nonce_field( 'dbquery_report_dbquery_update_query', 'dbquery_report_dbquery_update_query_nonce' ) . '
+            ' . wp_nonce_field('dbquery_report_dbquery_update_query', 'dbquery_report_dbquery_update_query_nonce') . '
             <input class="update-btn" type="submit" name="dbquery_report_dbquery_update_query_submit" value="Update" />
         </form>
         <br>
-        ' . DBQueryReportTable::dbquery_report_table_validate_error( htmlspecialchars(DBQueryReportTableModel::get_dbquery_report_table_query($id, ENT_QUOTES) ) ) . '
+        ' . DBQueryReportTable::dbquery_report_table_validate_error(htmlspecialchars(DBQueryReportTableModel::get_dbquery_report_table_query($id, ENT_QUOTES))) . '
         <br>
         <label>Enter HTML table head to be displayed before results of query - Only enter valid HTML table head elements</label>
         <br>
         &lt;thead&gt;
-        <form method="POST" action="' . esc_url( admin_url( 'admin-post.php' )) . '">
+        <form id="dbquery_report_table_head_form">
             <textarea cols="150" rows="8" name="dbquery_report_table_head_content">' .  htmlspecialchars(DBQueryReportTableModel::get_dbquery_report_table_head_content($id), ENT_QUOTES) . '</textarea>
             <br>
             <input type="hidden" name="dbquery_report_table_id" value="' . htmlspecialchars($id, ENT_QUOTES) . '" />
             <input type="hidden" name="action" value="report_table_head_update_query" />
             &lt;/thead&gt; 
             <br>
-            ' . wp_nonce_field() . '
+            ' . wp_nonce_field('dbquery_report_table_head_update_query', 'dbquery_report_table_head_update_query_nonce') . '
             <input class="update-btn" type="submit" name="report_table_head_update_query_submit" value="Update" />
         </form>
         </div>';

@@ -20,10 +20,14 @@ class DBQueryReportTable
         add_filter('plugin_action_links_' . WPDBQRT__PLUGIN_BASENAME, array($this,  'plugin_add_settings_link' ));
         // Add frontend scripts
         add_action('wp_enqueue_scripts', array($this, 'enqueue_front_end_scripts' ));
+        
+        // add_action('admin_post_report_table_head_update_query', array('DBQueryReportTableModel', 'dbquery_report_table_head_update_query'));
+        // add_action('admin_post_dbquery_report_dbquery_update_query', array('DBQueryReportTableModel', 'dbquery_report_dbquery_update_query'));
+
         // receive POST from form with table head HTML and put in DB
-        add_action('admin_post_report_table_head_update_query', array('DBQueryReportTableModel', 'dbquery_report_table_head_update_query'));
+        add_action('wp_ajax_report_table_head_update_query', array('DBQueryReportTableModel', 'dbquery_report_table_head_update_query'));
         // receive POST from form with dbquery query and put in DB
-        add_action('admin_post_dbquery_report_dbquery_update_query', array('DBQueryReportTableModel', 'dbquery_report_dbquery_update_query'));
+        add_action('wp_ajax_dbquery_report_dbquery_update_query', array('DBQueryReportTableModel', 'dbquery_report_dbquery_update_query'));
         // receive POST from form with dbquery query and put in DB
         add_action('admin_post_dbquery_report_new_form_query', array('DBQueryReportTableModel', 'dbquery_report_new_form_query'));
         // receive POST from form with dbquery query and put in DB

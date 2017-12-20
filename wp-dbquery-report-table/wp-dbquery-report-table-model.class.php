@@ -2,9 +2,9 @@
 
 defined('ABSPATH') or die('Computer says no!');
 
-class DBQueryReportTableModel {
-
-    public static function setup_database_tables() 
+class DBQueryReportTableModel
+{
+    public static function setup_database_tables()
     {
         global $wpdb;
         $charset_collate = $wpdb->get_charset_collate();
@@ -36,8 +36,8 @@ class DBQueryReportTableModel {
 
        
     public static function dbquery_get_form_ids_query()
-	{
-		global $wpdb;
+    {
+        global $wpdb;
         $table_name = $wpdb->prefix . 'dbquery_report_table';
         $ids_array = $wpdb->get_results("SELECT id FROM $table_name", ARRAY_A);
         return $ids_array;
@@ -48,20 +48,20 @@ class DBQueryReportTableModel {
         global $wpdb;
         if (! isset($_POST['dbquery_report_new_form_query_nonce']) || ! wp_verify_nonce($_POST['dbquery_report_new_form_query_nonce'], 'dbquery_report_new_form_query')) {
             print 'Sorry, your nonce did not verify.';
-            exit;
+            die();
         } else {
             if (isset($_POST['dbquery_report_table_id']) && isset($_POST['new_dbquery_report_table'])) {
                 $id = intval($_POST['dbquery_report_table_id']);
                 if ($id === 0) {
-                    set_transient( get_current_user_id() . '_wp_query_report_table_error_notice', __( 'Something went wrong, new DBQuery Report Table was not created!', 'textdomain' ) );
+                    set_transient(get_current_user_id() . '_wp_query_report_table_error_notice', __('Something went wrong, new DBQuery Report Table was not created!', 'textdomain'));
                     wp_redirect(admin_url("admin.php?page=dbquery-report-table"));
-                    exit;
+                    die();
                 }
                 $table_name = $wpdb->prefix . 'dbquery_report_table';
                 $wpdb->query("INSERT INTO $table_name (id) VALUES ('$id')");
-                set_transient( get_current_user_id() . '_wp_query_report_table_success_notice', __( 'New DBQuery Report Table created!', 'textdomain' ) );
+                set_transient(get_current_user_id() . '_wp_query_report_table_success_notice', __('New DBQuery Report Table created!', 'textdomain'));
                 wp_redirect(admin_url("admin.php?page=dbquery-report-table-form"));
-                exit;
+                die();
             }
         }
     }
@@ -71,19 +71,19 @@ class DBQueryReportTableModel {
         global $wpdb;
         if (! isset($_POST['dbquery_report_delete_form_query_nonce']) || ! wp_verify_nonce($_POST['dbquery_report_delete_form_query_nonce'], 'dbquery_report_delete_form_query')) {
             print 'Sorry, your nonce did not verify.';
-            exit;
+            die();
         } else {
             if (isset($_POST['dbquery_report_table_id']) && isset($_POST['delete_dbquery_report_table'])) {
                 $id = intval($_POST['dbquery_report_table_id']);
                 if ($id === 0) {
                     wp_redirect(admin_url("admin.php?page=dbquery-report-table"));
-                    exit;
+                    die();
                 }
                 $table_name = $wpdb->prefix . 'dbquery_report_table';
                 $wpdb->query("DELETE FROM $table_name WHERE id = '$id'");
-                set_transient( get_current_user_id() . '_wp_query_report_table_error_notice', __( 'DBQuery Report Table ' . htmlspecialchars($id, ENT_QUOTES) . ' was deleted!', 'textdomain' ) );
+                set_transient(get_current_user_id() . '_wp_query_report_table_error_notice', __('DBQuery Report Table ' . htmlspecialchars($id, ENT_QUOTES) . ' was deleted!', 'textdomain'));
                 wp_redirect(admin_url("admin.php?page=dbquery-report-table"));
-                exit;
+                die();
             }
         }
     }
@@ -92,37 +92,34 @@ class DBQueryReportTableModel {
     // update table head HTML
     public static function dbquery_report_table_head_update_query()
     {
-        global $wpdb;
-        if (isset($_POST['dbquery_report_table_head_content']) && !empty($_POST['dbquery_report_table_head_content'])  && isset($_POST['dbquery_report_table_id'])) {
-            $id = intval($_POST['dbquery_report_table_id']);
-            if ($id === 0) {
-                set_transient( get_current_user_id() . '_wp_query_report_table_error_notice', __( 'Something went wrong, Table head not updated!', 'textdomain' ) );
-                wp_redirect(admin_url("admin.php?page=dbquery-report-table"));
-                exit;
+        if (! isset($_POST['dbquery_report_table_head_update_query_nonce']) || ! wp_verify_nonce($_POST['dbquery_report_table_head_update_query_nonce'], 'dbquery_report_table_head_update_query')) {
+            die();
+        } else {
+            if (isset($_POST['dbquery_report_table_head_content']) && !empty($_POST['dbquery_report_table_head_content'])  && isset($_POST['dbquery_report_table_id'])) {
+                global $wpdb;
+                $id = intval($_POST['dbquery_report_table_id']);
+                if ($id < 1) {
+                    die();
+                }
+                $submittedElements = $_POST['dbquery_report_table_head_content'];
+                $submittedElements = preg_replace("/(\<table\>)|(\<\/table\>)|(\<thead\>)|(\<\/thead\>)|(\<script\>)|(\<\/script\>)|(\<a\>)|(\<\/a\>)|(\<link\>)|(\<area\>)|(\<img\>)|(\<embed\>)|(\<\/embed\>)|(\<iframe\>)|(\<\/iframe\>)|(\<video\>)|(\<audio\>)|(\<html\>)|(\<\/html\>)|(\<canvas\>)|(\<track\>)|(\<form\>)|(\<\/form\>)|(\<formaction\>)|(\<base\>)|(\<command\>)|(\<source\>)|(\<object\>)/imxU", "", strtolower($submittedElements));
+                $table_name = $wpdb->prefix . 'dbquery_report_table';
+                $wpdb->query("UPDATE $table_name SET report_table_head_content = '" . $submittedElements . "' WHERE id = $id");
+                die('1');
             }
-            $submittedElements = $_POST['dbquery_report_table_head_content'];
-            $submittedElements = preg_replace("/(\<table\>)|(\<\/table\>)|(\<thead\>)|(\<\/thead\>)|(\<script\>)|(\<\/script\>)|(\<a\>)|(\<\/a\>)|(\<link\>)|(\<\/link\>)/imxU", "", strtolower($submittedElements));
-            $table_name = $wpdb->prefix . 'dbquery_report_table';
-            $wpdb->query("UPDATE $table_name SET report_table_head_content = '" . $submittedElements . "' WHERE id = $id");
-            set_transient( get_current_user_id() . '_wp_query_report_table_success_notice', __( 'Table head HTML has been updated!', 'textdomain' ) );
-            wp_redirect(admin_url("admin.php?page=dbquery-report-table-form&id=$id"));
-            exit;
         }
     }
 
     // update report mysql query
     public static function dbquery_report_dbquery_update_query()
     {
-        global $wpdb;
         if (! isset($_POST['dbquery_report_dbquery_update_query_nonce']) || ! wp_verify_nonce($_POST['dbquery_report_dbquery_update_query_nonce'], 'dbquery_report_dbquery_update_query')) {
-            print 'Sorry, your nonce did not verify.';
-            exit;
+            die();
         } else {
-            if (!isset($_POST['dbquery_report_table_query']) && !isset($_POST['dbquery_report_table_id']) && intval($_POST['dbquery_report_table_id']) === 0) {
-                set_transient( get_current_user_id() . '_wp_query_report_table_error_notice', __( 'Something went wrong, MySQL query not updated!', 'textdomain' ) );
-                wp_redirect(admin_url("admin.php?page=dbquery-report-table"));
-                exit;
+            if (!isset($_POST['dbquery_report_table_query']) && !isset($_POST['dbquery_report_table_id']) && intval($_POST['dbquery_report_table_id']) < 1) {
+                die();
             }
+            global $wpdb;
             $id = intval($_POST['dbquery_report_table_id']);
             $query = $_POST['dbquery_report_table_query'];
             // Sanitize query
@@ -159,18 +156,12 @@ class DBQueryReportTableModel {
                     $validationError = "";
                     $table_name = $wpdb->prefix . 'dbquery_report_table';
                     $result = $wpdb->query("UPDATE $table_name SET report_table_query = '$query' WHERE id = $id");
-                    set_transient( get_current_user_id() . '_wp_query_report_table_success_notice', __( 'MySQL query has been updated!', 'textdomain' ) );
-                    wp_redirect(admin_url("admin.php?page=dbquery-report-table-form&id=$id"));
-                    exit;
+                    die('1');
                 } else {
-                    set_transient( get_current_user_id() . '_wp_query_report_table_error_notice', __( 'Something went wrong, MySQL query not updated!', 'textdomain' ) );
-                    wp_redirect(admin_url("admin.php?page=dbquery-report-table-form&id=$id"));
-                    exit;
+                    die();
                 }
             } else {
-                set_transient( get_current_user_id() . '_wp_query_report_table_error_notice', __( 'Something went wrong, MySQL query not updated!', 'textdomain' ) );
-                wp_redirect(admin_url("admin.php?page=dbquery-report-table"));
-                exit;
+                die();
             }
         }
     }

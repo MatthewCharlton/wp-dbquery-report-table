@@ -39,6 +39,7 @@ div#WPDBQRT-form, #WPDBQRT-admin {
     background: #f7f7f7;
 }
 #WPDBQRT-form .update-btn {
+    cursor: pointer;
     background: #0866ad;
     color: #fff;
     border: none;
