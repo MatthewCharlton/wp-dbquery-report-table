@@ -103,17 +103,17 @@ class DBQueryReportTable
         $html .= '</div>';
         $html .= '<script>';
         $html .= '
-		var report_table_' . htmlspecialchars($id, ENT_QUOTES) . '_tds = document.querySelectorAll("#report_table_' . htmlspecialchars($id, ENT_QUOTES) . ' thead td");
-		var report_table_' . htmlspecialchars($id, ENT_QUOTES) . '_ths = document.querySelectorAll("#report_table_' . htmlspecialchars($id, ENT_QUOTES) . ' thead th");
+		var report_table_' . htmlspecialchars($id, ENT_QUOTES) . '_tds = document.querySelectorAll("#wpdbqrt_table_' . htmlspecialchars($id, ENT_QUOTES) . ' thead td");
+		var report_table_' . htmlspecialchars($id, ENT_QUOTES) . '_ths = document.querySelectorAll("#wpdbqrt_table_' . htmlspecialchars($id, ENT_QUOTES) . ' thead th");
 		if( report_table_' . htmlspecialchars($id, ENT_QUOTES) . '_tds.length > 0 ){
-			for (var i = 0; i < report_table_' . htmlspecialchars($id, ENT_QUOTES) . '_tds.length; i++) {
-				report_table_' . htmlspecialchars($id, ENT_QUOTES) . '_tds[i].setAttribute("data-sort", "wpdbqrt_data_" + i);
-				report_table_' . htmlspecialchars($id, ENT_QUOTES) . '_tds[i].classList.add("sort");
+			for (var i = 1; i <= report_table_' . htmlspecialchars($id, ENT_QUOTES) . '_tds.length; i++) {
+				report_table_' . htmlspecialchars($id, ENT_QUOTES) . '_tds[ (i - 1) ].setAttribute("data-sort", "wpdbqrt_data_" + i);
+				report_table_' . htmlspecialchars($id, ENT_QUOTES) . '_tds[ (i - 1) ].classList.add("sort");
 			}
 		} else if ( report_table_' . htmlspecialchars($id, ENT_QUOTES) . '_ths.length > 0 ) {
-			for (var i = 0; i < report_table_' . htmlspecialchars($id, ENT_QUOTES) . '_ths.length; i++) {
-				report_table_' . htmlspecialchars($id, ENT_QUOTES) . '_ths[i].setAttribute("data-sort", "wpdbqrt_data_" + i);
-				report_table_' . htmlspecialchars($id, ENT_QUOTES) . '_ths[i].classList.add("sort");
+			for (var i = 1; i <= report_table_' . htmlspecialchars($id, ENT_QUOTES) . '_ths.length; i++) {
+				report_table_' . htmlspecialchars($id, ENT_QUOTES) . '_ths[ (i - 1) ].setAttribute("data-sort", "wpdbqrt_data_" + i);
+				report_table_' . htmlspecialchars($id, ENT_QUOTES) . '_ths[ (i - 1) ].classList.add("sort");
 			}
 		}';
         $html .= '</script>';
@@ -122,7 +122,7 @@ class DBQueryReportTable
         for ($cellNo = 1; $cellNo <= $rowCellCount; $cellNo++) {
             $html .= 'wpdbqrt_data_' . $cellNo . '","';
         }
-        $html .= '"], indexAsync = true; };';
+        $html .= '"], indexAsync: true };';
         $html .= ' var list_report_table_' . htmlspecialchars($id, ENT_QUOTES) . ' = new List("wpdbqrt-table-wrapper_' . htmlspecialchars($id, ENT_QUOTES) . '", options );';
         $html .= '</script>';
         return $html;
